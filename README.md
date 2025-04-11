@@ -1,4 +1,5 @@
-Оконное приложение на PyQt5 для визуального создания моделей на основе PyTorch для датасета MNIST
+Оконное приложение на PyQt5 для визуального создания слоёв модели на PyTorch для датасета MNIST
 
-![image](https://github.com/user-attachments/assets/c002afb7-c895-42eb-9656-d16ff8947240)
+![image](https://github.com/user-attachments/assets/dfc82f9b-d1e3-4170-91af-af240c4462b5)
+
 
