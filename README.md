@@ -1,5 +1,10 @@
 Оконное приложение на PyQt5 для визуального создания слоёв модели на PyTorch для датасета MNIST
 
-![image](https://github.com/user-attachments/assets/dfc82f9b-d1e3-4170-91af-af240c4462b5)
+Можно добавлять Conv2D и Linear слои, задавать количество нейронов в них. 
+
+Полученная модель обучается на датасете MNIST с заданным количеством эпох, затем сохраняется в формате .pth
+
+
+![image](https://github.com/user-attachments/assets/fb4975ba-9eb1-4520-b083-e95e1aa10bbe)
 
 
