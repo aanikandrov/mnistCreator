@@ -26,6 +26,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Neural Network Builder for MNIST")
         self.setGeometry(100, 100, 800, 600)
         self.epochs = 5
+        self.selected_layer_index = -1
 
         self.model = None
         self.train_loader = None
@@ -42,11 +43,26 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(main_widget)
         main_layout = QHBoxLayout(main_widget)
 
+        self.layer_details = QWidget()
+        layer_details_layout = QVBoxLayout(self.layer_details)
 
+        self.layer_type_label = QLabel("Selected layer: None")
+        self.layer_params_edit = QLineEdit()
+        self.layer_params_edit.setPlaceholderText("Enter neurons count")
+        self.update_params_btn = QPushButton("Update Parameters")
+        self.update_params_btn.clicked.connect(self.update_layer_params)
+
+        layer_details_layout.addWidget(self.layer_type_label)
+        layer_details_layout.addWidget(QLabel("Neuron Count:"))
+        layer_details_layout.addWidget(self.layer_params_edit)
+        layer_details_layout.addWidget(self.update_params_btn)
+        layer_details_layout.addStretch()
 
         # Область рисования
         self.drawing_area = DrawingAreaFile.DrawingArea()
-        main_layout.addWidget(self.drawing_area, stretch=1)
+        main_layout.addWidget(self.drawing_area, stretch=1)\
+
+        self.drawing_area.layer_selected.connect(self.handle_layer_selection)
 
         # Правая панель
         right_panel = QWidget()
@@ -108,6 +124,7 @@ class MainWindow(QMainWindow):
         top_buttons_layout.addStretch()
 
         right_layout.addWidget(top_buttons)
+        right_layout.insertWidget(1, self.layer_details)
 
         # Прогресс-бар
         self.progress_bar = QProgressBar()
@@ -142,6 +159,38 @@ class MainWindow(QMainWindow):
         right_layout.addWidget(bottom_buttons)
 
         main_layout.addWidget(right_panel)
+
+    def handle_layer_selection(self, index):
+        """Обработчик выбора слоя"""
+        self.selected_layer_index = index
+        if index >= 0 and index < len(self.drawing_area.layer_types):
+            layer_type = self.drawing_area.layer_types[index]
+            params = self.drawing_area.squares[index]['text']
+            self.layer_type_label.setText(f"Selected layer: {layer_type}")
+            self.layer_params_edit.setText(params)
+        else:
+            self.layer_type_label.setText("Selected layer: None")
+            self.layer_params_edit.clear()
+
+    def update_layer_params(self):
+        """Обновление параметров слоя"""
+        if self.selected_layer_index == -1:
+            return
+
+        new_params = self.layer_params_edit.text()
+        if not new_params.isdigit():
+            QMessageBox.warning(self, "Error", "Parameters must be a number!")
+            return
+
+        # Обновляем визуальное представление
+        square = self.drawing_area.squares[self.selected_layer_index]
+        square['text'] = new_params
+        self.drawing_area.update()
+
+        # Обновляем модель (при необходимости)
+        QMessageBox.information(self, "Success", "Parameters updated!")
+
+
 
     def open_model(self):
         file_path, _ = QFileDialog.getOpenFileName(

@@ -16,6 +16,8 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import os
 
 class DrawingArea(QFrame):
+    layer_selected = pyqtSignal(int)
+
     def __init__(self):
         super().__init__()
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
@@ -28,9 +30,10 @@ class DrawingArea(QFrame):
         self.counter_label.setAlignment(Qt.AlignRight | Qt.AlignBottom)
         self.counter_label.setStyleSheet("font-size: 12px; color: gray;")
 
+
     def add_square(self, color, text="", layer_type=""):
-        size = 50
-        padding = 10
+        size = 70
+        padding = 15
 
         if not self.squares:
             x, y = padding, padding
@@ -84,7 +87,7 @@ class DrawingArea(QFrame):
         painter.drawRect(0, 0, self.width() - 1, self.height() - 1)
 
         if len(self.squares) > 1:
-            pen = QPen(QColor(100, 200, 100), 4)
+            pen = QPen(QColor(100, 200, 100), 6)
             painter.setPen(pen)
 
             for i in range(1, len(self.squares)):
@@ -135,6 +138,7 @@ class DrawingArea(QFrame):
                     square['size']
                 )
                 if square_rect.contains(pos):
+                    self.layer_selected.emit(i)
                     self.dragged_square_index = i
                     self.drag_offset = pos - square_rect.topLeft()
                     break
